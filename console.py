@@ -10,7 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-
+import shlex
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
@@ -115,16 +115,45 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+        arg = args.split(' ')
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        elif arg[0] not in  HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
+        new_list = []
+        for i in arg:
+            start_idx = i.find("=")
+            i = i[0: start_idx] + i[start_idx:].replace('_', ' ')
+            new_list.append(i)
+        if arg[0] in  HBNBCommand.classes:
+            new_instance =  HBNBCommand.classes[new_list[0]]()
+            obj = {}
+        for i in new_list:
+            if i != new_list[0]:
+                snd_list = i.split('=')
+                obj[snd_list[0]] = snd_list[1]
+        for k, v in obj.items():
+            if v[0] == '"':
+                s_list = shlex.split(v)
+                obj[k] = s_list[0]
+                setattr(new_instance, k, obj[k])
+            else:
+                try:
+                    if type(eval(v)).__name__ == 'int':
+                        v = eval(v)
+                except:
+                    continue
+                try:
+                    if type(eval(v)).__name__ == 'float':
+                        v = eval(v)
+                except:
+                    continue
+                setattr(new_instance, k, v)
+
+        new_instance.save()    
         print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
