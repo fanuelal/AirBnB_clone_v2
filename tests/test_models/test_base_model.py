@@ -1,25 +1,26 @@
 #!/usr/bin/python3
-""" """
+"""defining unittests for the base_model.py """
 from models.base_model import BaseModel
 import unittest
 import datetime
 from uuid import UUID
 import json
 import os
-
+import pep8
 
 class test_basemodel(unittest.TestCase):
-    """ """
+    """testing basemodel class """
 
     def __init__(self, *args, **kwargs):
-        """ """
+        """initializing """
         super().__init__(*args, **kwargs)
         self.name = 'BaseModel'
         self.value = BaseModel
 
     def setUp(self):
         """ """
-        pass
+        self.name = 'BaseModel'
+        self.value = BaseModel
 
     def tearDown(self):
         try:
@@ -38,6 +39,11 @@ class test_basemodel(unittest.TestCase):
         copy = i.to_dict()
         new = BaseModel(**copy)
         self.assertFalse(new is i)
+
+    def test_style(self):
+        style = pep8.StyleGuide(quiet=True)
+        p = style.check_files([r'models/base_model.py'])
+        self.assertEqual(p.total_errors, 0, 'fix pep8')
 
     def test_kwargs_int(self):
         """ """
@@ -97,3 +103,6 @@ class test_basemodel(unittest.TestCase):
         n = new.to_dict()
         new = BaseModel(**n)
         self.assertFalse(new.created_at == new.updated_at)
+
+if __name__ == '__main__':
+    unittest.main()
