@@ -1,14 +1,16 @@
 #!/usr/bin/python3
-#Fabric script (based on the file 2-do_deploy_web_static.py)
+"""Fabric script (based on the file 2-do_deploy_web_static.py)"""
 
 from fabric.api import *
 from datetime import datetime
 from os.path import exists
 
-env.hosts = ['3.235.242.152','3.81.29.69']
+env.hosts = ['3.235.242.152', '3.81.29.69']
+
 
 def do_pack():
-    """ Fabric script that generates a .tgz archive from the contents of the web_static
+    """ Fabric script that generates a .tgz
+archive from the contents of the web_static
     """
     local("sudo mkdir -p versions")
     date = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -18,6 +20,8 @@ def do_pack():
         return filename
     else:
         return None
+
+
 def do_deploy(archive_path):
     """ deploy on the server"""
 
@@ -52,10 +56,11 @@ def do_deploy(archive_path):
         return False
     return True
 
+
 def deploy():
     """ function, using the new path of the new archive"""
     new = do_pack()
     if exists(new) is False:
         return False
-    result =  do_deploy(new)
+    result = do_deploy(new)
     return result
